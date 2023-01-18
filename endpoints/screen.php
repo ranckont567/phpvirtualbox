@@ -13,9 +13,9 @@
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_WARNING);
 
 require_once(dirname(__FILE__).'/lib/config.php');
+$pvbxver = substr(@constant('PHPVBOX_VER'),0,(strpos(@constant('PHPVBOX_VER'),'-')));
 require_once(dirname(__FILE__).'/lib/utils.php');
-require_once(dirname(__FILE__).'/lib/vboxconnector.php');
-
+require_once(dirname(__FILE__).'/lib/vboxconnector-'.$pvbxver.'.php');
 
 // Allow caching of some screenshot data
 @Header('ETag: "' . $_REQUEST['vm'].'_'.$_REQUEST['randid'].'"');

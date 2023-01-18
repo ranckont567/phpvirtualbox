@@ -120,7 +120,8 @@ class vboxconnector {
 	public function __construct($useAuthMaster = false) {
 
 		require_once(dirname(__FILE__).'/language.php');
-		require_once(dirname(__FILE__).'/vboxServiceWrappers.php');
+		// get vboxServiceWrappers.php from SDK VirtualBox
+                require_once(dirname(__FILE__).'/vboxServiceWrappers-5.2.php');
 
 		/* Set up.. .. settings */
 
@@ -172,6 +173,7 @@ class vboxconnector {
 
 		//Connect to webservice
 		$pvbxver = substr(@constant('PHPVBOX_VER'),0,(strpos(@constant('PHPVBOX_VER'),'-')));
+		// get vboxwebService.wsdl from SDK VirtualBox
 		$this->client = new SoapClient(dirname(__FILE__)."/vboxwebService-".$pvbxver.".wsdl",
 		    array(
 		    	'features' => (SOAP_USE_XSI_ARRAY_TYPE + SOAP_SINGLE_ELEMENT_ARRAYS),

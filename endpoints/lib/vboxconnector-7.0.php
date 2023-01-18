@@ -120,7 +120,8 @@ class vboxconnector {
 	public function __construct($useAuthMaster = false) {
 
 		require_once(dirname(__FILE__).'/language.php');
-		require_once(dirname(__FILE__).'/vboxServiceWrappers.php');
+		// get vboxServiceWrappers.php from SDK VirtualBox
+		require_once(dirname(__FILE__).'/vboxServiceWrappers-7.0.php');
 
 		/* Set up.. .. settings */
 
@@ -172,7 +173,8 @@ class vboxconnector {
 
 		//Connect to webservice
 		$pvbxver = substr(@constant('PHPVBOX_VER'),0,(strpos(@constant('PHPVBOX_VER'),'-')));
-		$this->client = new SoapClient(dirname(__FILE__)."/vboxwebService-".$pvbxver.".wsdl",
+                // get vboxwebService.wsdl from SDK VirtualBox
+                $this->client = new SoapClient(dirname(__FILE__)."/vboxwebService-".$pvbxver.".wsdl",
 		    array(
 		    	'features' => (SOAP_USE_XSI_ARRAY_TYPE + SOAP_SINGLE_ELEMENT_ARRAYS),
 		        'cache_wsdl' => WSDL_CACHE_BOTH,
@@ -4207,11 +4209,11 @@ class vboxconnector {
 			'CPUCount' => $m->CPUCount,
 			'HPETEnabled' => $m->HPETEnabled,
 			'memorySize' => $m->memorySize,
-			'VRAMSize' => $m->VRAMSize,
+			'VRAMSize' => $m->graphicsAdapter->VRAMSize,
 			'pointingHIDType' => (string)$m->pointingHIDType,
 			'keyboardHIDType' => (string)$m->keyboardHIDType,
-			'accelerate3DEnabled' => $m->accelerate3DEnabled,
-			'accelerate2DVideoEnabled' => $m->accelerate2DVideoEnabled,
+			'accelerate3DEnabled' => $m->graphicsAdapter->accelerate3DEnabled,
+			'accelerate2DVideoEnabled' => $m->graphicsAdapter->accelerate2DVideoEnabled,
 			'BIOSSettings' => array(
 				'ACPIEnabled' => $m->BIOSSettings->ACPIEnabled,
 				'IOAPICEnabled' => $m->BIOSSettings->IOAPICEnabled,
@@ -4219,7 +4221,7 @@ class vboxconnector {
 				),
 			'firmwareType' => (string)$m->firmwareType,
 			'snapshotFolder' => $m->snapshotFolder,
-			'monitorCount' => $m->monitorCount,
+			'monitorCount' => $m->graphicsAdapter->monitorCount,
 			'pageFusionEnabled' => $m->pageFusionEnabled,
 			'VRDEServer' => (!$m->VRDEServer ? null : array(
 				'enabled' => $m->VRDEServer->enabled,
@@ -4232,9 +4234,9 @@ class vboxconnector {
 				'VRDEExtPack' => (string)$m->VRDEServer->VRDEExtPack
 				)),
 			'audioAdapter' => array(
-				'enabled' => $m->audioAdapter->enabled,
-				'audioController' => (string)$m->audioAdapter->audioController,
-				'audioDriver' => (string)$m->audioAdapter->audioDriver,
+				'enabled' => $m->audioSettings->adapter->enabled,
+				'audioController' => $m->audioSettings->adapter->audioController,
+				'audioDriver' => $m->audioSettings->adapter->audioDriver,
 				),
 			'RTCUseUTC' => $m->RTCUseUTC,
 		    'EffectiveParavirtProvider' => (string)$m->getEffectiveParavirtProvider(),

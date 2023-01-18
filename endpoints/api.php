@@ -25,8 +25,9 @@ header("Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-ch
 header("Pragma: no-cache");
 
 require_once(dirname(__FILE__).'/lib/config.php');
+$pvbxver = substr(@constant('PHPVBOX_VER'),0,(strpos(@constant('PHPVBOX_VER'),'-')));
 require_once(dirname(__FILE__).'/lib/utils.php');
-require_once(dirname(__FILE__).'/lib/vboxconnector.php');
+require_once(dirname(__FILE__).'/lib/vboxconnector-'.$pvbxver.'.php');
 
 // Init session
 global $_SESSION;
@@ -334,9 +335,6 @@ try {
 
 	// Just append to $vbox->errors and let it get
 	// taken care of below
-	if(!isset($vbox)) {
-		$vbox = new stdClass();
-	}
 	if(!$vbox || !$vbox->errors) {
 		$vbox->errors = array();
 	}
@@ -345,7 +343,7 @@ try {
 
 
 // Add any messages
-if($vbox && isset($vbox->messages)?count($vbox->messages):false) {
+if($vbox && count($vbox->messages)) {
 	foreach($vbox->messages as $m)
 		$response['messages'][] = 'vboxconnector('.$request['fn'] .'): ' . $m;
 }
@@ -363,7 +361,7 @@ if($vbox && $vbox->errors) {
 		if($e->getCode() == vboxconnector::PHPVB_ERRNO_CONNECT && isset($vbox->settings))
 			$d .= "\n\nLocation:" . $vbox->settings->location;
 
-		$response['messages'][] = htmlentities($e->getMessage()). htmlentities(' '. $details);
+		$response['messages'][] = htmlentities($e->getMessage()).' ' . htmlentities($details);
 
 		$response['errors'][] = array(
 			'error'=> ($e->getCode() & vboxconnector::PHPVB_ERRNO_HTML ? $e->getMessage() : htmlentities($e->getMessage())),
